@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:www.framer.com)",
+      "Bash(npm start)",
+      "Bash(grep:*)",
+      "Bash(ls:*)",
+      "Bash(rg:*)",
+      "Bash(find:*)",
+      "Bash(ss:*)",
+      "Bash(npm run dev:*)"
+    ],
+    "deny": []
+  }
+}

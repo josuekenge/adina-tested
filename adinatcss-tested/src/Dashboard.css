@@ -1,0 +1,426 @@
+/* Clean Framer-Inspired Dashboard Styles */
+
+/* Color Palette - Matching Landing Page */
+:root {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f8fafc;
+  --bg-tertiary: #f1f5f9;
+  --bg-card: #ffffff;
+  --bg-card-hover: #f8fafc;
+  
+  --border-primary: #e2e8f0;
+  --border-secondary: #f1f5f9;
+  --border-accent: #3b82f6;
+  
+  --text-primary: #1e293b;
+  --text-secondary: #475569;
+  --text-tertiary: #64748b;
+  --text-muted: #94a3b8;
+  
+  --accent-blue: #3b82f6;
+  --accent-emerald: #10b981;
+  --accent-purple: #8b5cf6;
+  --accent-orange: #f97316;
+  
+  --gradient-primary: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
+  --gradient-emerald: linear-gradient(135deg, #10b981 0%, #059669 100%);
+  --gradient-purple: linear-gradient(135deg, #8b5cf6 0%, #7c3aed 100%);
+  --gradient-orange: linear-gradient(135deg, #f97316 0%, #ea580c 100%);
+  
+  --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.1);
+  --shadow-lg: 0 8px 32px rgba(0, 0, 0, 0.12);
+  --shadow-xl: 0 16px 64px rgba(0, 0, 0, 0.15);
+}
+
+/* Clean minimal animations */
+@keyframes fadeInUp {
+  from { 
+    opacity: 0; 
+    transform: translateY(24px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateY(0); 
+  }
+}
+
+@keyframes slideIn {
+  from { 
+    opacity: 0; 
+    transform: translateX(-20px); 
+  }
+  to { 
+    opacity: 1; 
+    transform: translateX(0); 
+  }
+}
+
+@keyframes glow {
+  0%, 100% { 
+    box-shadow: 0 0 20px rgba(59, 130, 246, 0.1); 
+  }
+  50% { 
+    box-shadow: 0 0 40px rgba(59, 130, 246, 0.2); 
+  }
+}
+
+@keyframes shimmer {
+  0% { transform: translateX(-100%); }
+  100% { transform: translateX(100%); }
+}
+
+/* Base animations */
+.fade-in {
+  animation: fadeInUp 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-in {
+  animation: slideIn 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Clean card styles matching landing page */
+.syntro-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: 16px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+}
+
+.syntro-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg, 
+    transparent, 
+    rgba(59, 130, 246, 0.05), 
+    transparent
+  );
+  transition: left 0.6s ease;
+}
+
+.syntro-card:hover::before {
+  left: 100%;
+}
+
+.syntro-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Clean modern buttons matching landing page */
+.syntro-button {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  color: var(--text-primary);
+  font-weight: 500;
+  padding: 12px 20px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+}
+
+.syntro-button:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-md);
+}
+
+.syntro-button-primary {
+  background: var(--gradient-primary);
+  border: none;
+  color: white;
+  font-weight: 600;
+  box-shadow: var(--shadow-md);
+}
+
+.syntro-button-primary:hover {
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Clean metric cards matching landing page style */
+.metric-card {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: 20px;
+  padding: 28px;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--shadow-sm);
+}
+
+.metric-card:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
+  transform: translateY(-4px);
+  box-shadow: var(--shadow-lg);
+}
+
+/* Color-coded metric cards */
+.metric-card-blue {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.05) 0%, rgba(59, 130, 246, 0.02) 100%);
+  border-color: rgba(59, 130, 246, 0.1);
+}
+
+.metric-card-blue:hover {
+  background: linear-gradient(135deg, rgba(59, 130, 246, 0.08) 0%, rgba(59, 130, 246, 0.04) 100%);
+  border-color: var(--accent-blue);
+}
+
+.metric-card-emerald {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.05) 0%, rgba(16, 185, 129, 0.02) 100%);
+  border-color: rgba(16, 185, 129, 0.1);
+}
+
+.metric-card-emerald:hover {
+  background: linear-gradient(135deg, rgba(16, 185, 129, 0.08) 0%, rgba(16, 185, 129, 0.04) 100%);
+  border-color: var(--accent-emerald);
+}
+
+.metric-card-orange {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.05) 0%, rgba(249, 115, 22, 0.02) 100%);
+  border-color: rgba(249, 115, 22, 0.1);
+}
+
+.metric-card-orange:hover {
+  background: linear-gradient(135deg, rgba(249, 115, 22, 0.08) 0%, rgba(249, 115, 22, 0.04) 100%);
+  border-color: var(--accent-orange);
+}
+
+.metric-card-purple {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.05) 0%, rgba(139, 92, 246, 0.02) 100%);
+  border-color: rgba(139, 92, 246, 0.1);
+}
+
+.metric-card-purple:hover {
+  background: linear-gradient(135deg, rgba(139, 92, 246, 0.08) 0%, rgba(139, 92, 246, 0.04) 100%);
+  border-color: var(--accent-purple);
+}
+
+/* Clean sidebar matching landing page */
+.syntro-sidebar {
+  background: var(--bg-card);
+  border-right: 1px solid var(--border-primary);
+  backdrop-filter: blur(20px);
+}
+
+.syntro-nav-item {
+  border-radius: 12px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  position: relative;
+  color: var(--text-secondary);
+}
+
+.syntro-nav-item:hover {
+  background: rgba(59, 130, 246, 0.06);
+  color: var(--accent-blue);
+}
+
+.syntro-nav-item.active {
+  background: var(--gradient-primary);
+  color: white;
+  box-shadow: var(--shadow-md);
+}
+
+/* Clean header matching landing page */
+.syntro-header {
+  background: var(--bg-card);
+  border-bottom: 1px solid var(--border-primary);
+  backdrop-filter: blur(20px);
+  box-shadow: var(--shadow-sm);
+}
+
+/* Minimal status indicators */
+.status-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  display: inline-block;
+  margin-right: 8px;
+}
+
+.status-active {
+  background: #10b981;
+  animation: glow 2s ease-in-out infinite;
+}
+
+.status-inactive {
+  background: #94a3b8;
+}
+
+/* Clean inputs matching landing page */
+.syntro-input {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: 12px;
+  padding: 14px 16px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-size: 14px;
+  color: var(--text-primary);
+}
+
+.syntro-input:focus {
+  outline: none;
+  border-color: var(--border-accent);
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+  background: var(--bg-card);
+}
+
+.syntro-input:hover {
+  border-color: var(--border-accent);
+  background: var(--bg-card-hover);
+}
+
+.syntro-input::placeholder {
+  color: var(--text-muted);
+}
+
+/* Minimal scrollbar */
+.syntro-scrollbar::-webkit-scrollbar {
+  width: 4px;
+}
+
+.syntro-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.syntro-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(148, 163, 184, 0.5);
+  border-radius: 2px;
+}
+
+.syntro-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(148, 163, 184, 0.8);
+}
+
+/* Clean chart styles matching landing page */
+.chart-container {
+  background: var(--bg-card);
+  border: 1px solid var(--border-primary);
+  border-radius: 16px;
+  padding: 32px;
+  box-shadow: var(--shadow-sm);
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.chart-container:hover {
+  background: var(--bg-card-hover);
+  border-color: var(--border-accent);
+  box-shadow: var(--shadow-lg);
+  transform: translateY(-2px);
+}
+
+/* Clean progress bars */
+.progress-bar {
+  background: var(--border-secondary);
+  border-radius: 8px;
+  height: 8px;
+  overflow: hidden;
+}
+
+.progress-fill {
+  background: var(--gradient-primary);
+  height: 100%;
+  border-radius: 8px;
+  transition: width 1.2s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Clean typography matching landing page */
+.syntro-heading {
+  font-weight: 700;
+  color: var(--text-primary);
+  letter-spacing: -0.025em;
+}
+
+.syntro-subheading {
+  font-weight: 600;
+  color: var(--text-secondary);
+}
+
+.syntro-body {
+  color: var(--text-secondary);
+  line-height: 1.6;
+}
+
+.syntro-caption {
+  color: var(--text-muted);
+  font-size: 0.875rem;
+}
+
+/* Clean backgrounds matching landing page */
+.syntro-bg {
+  background: var(--bg-primary);
+  position: relative;
+}
+
+.syntro-bg::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 100vh;
+  background: radial-gradient(circle at 50% 0%, rgba(59, 130, 246, 0.05) 0%, transparent 50%);
+  pointer-events: none;
+}
+
+.syntro-bg-secondary {
+  background: var(--bg-secondary);
+}
+
+/* Staggered animations */
+.stagger-1 { animation-delay: 0.1s; }
+.stagger-2 { animation-delay: 0.2s; }
+.stagger-3 { animation-delay: 0.3s; }
+.stagger-4 { animation-delay: 0.4s; }
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .metric-card {
+    padding: 20px;
+  }
+  
+  .chart-container {
+    padding: 24px;
+  }
+  
+  .syntro-card {
+    margin-bottom: 16px;
+  }
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .syntro-card {
+    background: rgba(17, 24, 39, 0.95);
+    border-color: rgba(55, 65, 81, 0.8);
+  }
+  
+  .syntro-heading {
+    color: #f9fafb;
+  }
+  
+  .syntro-subheading {
+    color: #e5e7eb;
+  }
+  
+  .syntro-body {
+    color: #d1d5db;
+  }
+}
