@@ -66,17 +66,18 @@ const LandingPage = ({ user, onPlanSelected, devMode }) => {
   ];
 
   const handlePlanSelect = async (plan) => {
-    console.log('Plan selection started:', plan);
+    console.log('💰 Plan selection started:', plan);
     
     // Check if user is properly authenticated
     if (!user || !user.uid || !user.email) {
-      console.error('User not properly authenticated:', user);
+      console.error('💰 User not properly authenticated:', user);
       alert('Please sign in first to subscribe to a plan.');
       return;
     }
     
     // If dev mode, show fake checkout form
     if (devMode) {
+      console.log('💰 Dev mode detected, showing fake checkout');
       setSelectedPlanForCheckout(plan);
       setShowFakeCheckout(true);
       return;
@@ -86,7 +87,7 @@ const LandingPage = ({ user, onPlanSelected, devMode }) => {
     setLoading(true);
     
     try {
-      console.log('Calling redirectToCheckout with:', {
+      console.log('💰 Calling redirectToCheckout with:', {
         planId: plan.id,
         userId: user.uid,
         userEmail: user.email
@@ -95,11 +96,23 @@ const LandingPage = ({ user, onPlanSelected, devMode }) => {
       // Redirect to Stripe Checkout
       await redirectToCheckout(plan.id, user.uid, user.email);
       
-      console.log('Redirecting to Stripe Checkout...');
+      console.log('💰 Redirecting to Stripe Checkout...');
       
     } catch (error) {
-      console.error('Error processing payment:', error);
-      alert(`Error processing payment: ${error.message}`);
+      console.error('💰 Error processing payment:', error);
+      
+      // Provide more user-friendly error messages
+      let errorMessage = 'Unable to process payment. Please try again.';
+      
+      if (error.message.includes('Stripe is not configured')) {
+        errorMessage = 'Payment system is currently being configured. Please try again later.';
+      } else if (error.message.includes('Failed to create checkout session')) {
+        errorMessage = 'Unable to create payment session. Please check your internet connection and try again.';
+      } else if (error.message.includes('Failed to load Stripe')) {
+        errorMessage = 'Payment system failed to load. Please check your internet connection and try again.';
+      }
+      
+      alert(errorMessage);
       setSelectedPlan(null);
       setLoading(false);
     }

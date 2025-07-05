@@ -266,6 +266,23 @@ app.get('/api/debug-firebase', (req, res) => {
   });
 });
 
+// Debug endpoint to check Stripe status
+app.get('/api/debug-stripe', (req, res) => {
+  res.json({
+    stripeConfigured: !!stripe,
+    hasSecretKey: !!(process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !== 'sk_test_your_secret_key_here'),
+    hasPublishableKey: !!(process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY),
+    hasWebhookSecret: !!(process.env.STRIPE_WEBHOOK_SECRET),
+    secretKeyPreview: process.env.STRIPE_SECRET_KEY ? process.env.STRIPE_SECRET_KEY.substring(0, 12) + '***' : 'NOT_SET',
+    publishableKeyPreview: process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY ? process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY.substring(0, 12) + '***' : 'NOT_SET',
+    priceIds: {
+      starter: process.env.REACT_APP_STRIPE_STARTER_PRICE_ID || 'NOT_SET',
+      professional: process.env.REACT_APP_STRIPE_PROFESSIONAL_PRICE_ID || 'NOT_SET',
+      enterprise: process.env.REACT_APP_STRIPE_ENTERPRISE_PRICE_ID || 'NOT_SET'
+    }
+  });
+});
+
 // Get current webhook URL for debugging
 app.get('/api/webhook-url', async (req, res) => {
   try {
@@ -1855,17 +1872,43 @@ app.post('/api/debug/save-conversation', async (req, res) => {
 });
 
 // Stripe Integration
-const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+let stripe = null;
+if (process.env.STRIPE_SECRET_KEY && process.env.STRIPE_SECRET_KEY !== 'sk_test_your_secret_key_here') {
+  try {
+    stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+    console.log('💳 Stripe initialized successfully');
+  } catch (error) {
+    console.error('💳 Failed to initialize Stripe:', error.message);
+  }
+} else {
+  console.warn('⚠️ Stripe secret key not configured');
+}
 
 // Create Checkout Session
 app.post('/api/create-checkout-session', verifyToken, async (req, res) => {
   try {
+    console.log('💳 Creating checkout session for request:', req.body);
     const { priceId, userId, userEmail, planId, successUrl, cancelUrl } = req.body;
+    
+    // Validate required fields
+    if (!priceId || !userId || !userEmail || !planId) {
+      console.error('💳 Missing required fields:', { priceId: !!priceId, userId: !!userId, userEmail: !!userEmail, planId: !!planId });
+      return res.status(400).json({ error: 'Missing required fields: priceId, userId, userEmail, or planId' });
+    }
+    
+    // Check if Stripe is configured
+    if (!stripe) {
+      console.error('💳 Stripe not configured on server');
+      return res.status(500).json({ error: 'Payment processing is not configured on this server' });
+    }
     
     // In dev mode, skip strict user ID validation since we use mock authentication
     if (!isDevMode && req.user.uid !== userId) {
+      console.error('💳 Unauthorized user:', { requestedUserId: userId, actualUserId: req.user.uid });
       return res.status(403).json({ error: 'Unauthorized' });
     }
+
+    console.log('💳 Authorization passed, creating/finding customer...');
 
     // Create or get customer
     let customer;
@@ -1877,6 +1920,7 @@ app.post('/api/create-checkout-session', verifyToken, async (req, res) => {
       
       if (customers.data.length > 0) {
         customer = customers.data[0];
+        console.log('💳 Found existing customer:', customer.id);
       } else {
         customer = await stripe.customers.create({
           email: userEmail,
@@ -1885,11 +1929,14 @@ app.post('/api/create-checkout-session', verifyToken, async (req, res) => {
             planId: planId
           }
         });
+        console.log('💳 Created new customer:', customer.id);
       }
     } catch (error) {
-      console.error('Error creating/finding customer:', error);
-      return res.status(500).json({ error: 'Failed to create customer' });
+      console.error('💳 Error creating/finding customer:', error);
+      return res.status(500).json({ error: 'Failed to create customer: ' + error.message });
     }
+
+    console.log('💳 Creating Stripe checkout session...');
 
     // Create checkout session
     const session = await stripe.checkout.sessions.create({
@@ -1913,12 +1960,15 @@ app.post('/api/create-checkout-session', verifyToken, async (req, res) => {
           userId: userId,
           planId: planId
         }
-      }
+      },
+      allow_promotion_codes: true,
+      billing_address_collection: 'required'
     });
 
+    console.log('💳 Checkout session created successfully:', session.id);
     res.json({ id: session.id, url: session.url });
   } catch (error) {
-    console.error('Error creating checkout session:', error);
+    console.error('💳 Error creating checkout session:', error);
     res.status(500).json({ error: error.message });
   }
 });

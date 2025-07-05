@@ -6,6 +6,8 @@ const stripePublishableKey = process.env.REACT_APP_STRIPE_PUBLISHABLE_KEY;
 
 if (!stripePublishableKey || stripePublishableKey === 'pk_test_your_publishable_key_here') {
   console.warn('⚠️ Stripe publishable key not configured. Please add REACT_APP_STRIPE_PUBLISHABLE_KEY to your .env file');
+} else {
+  console.log('✅ Stripe publishable key loaded:', stripePublishableKey.substring(0, 20) + '...');
 }
 
 const stripePromise = stripePublishableKey && stripePublishableKey !== 'pk_test_your_publishable_key_here' 
@@ -138,22 +140,45 @@ export const createCheckoutSession = async (planId, userId, userEmail) => {
 // Redirect to Stripe Checkout
 export const redirectToCheckout = async (planId, userId, userEmail) => {
   try {
+    console.log('💳 redirectToCheckout called with:', { planId, userId, userEmail });
+    
     if (!stripePromise) {
+      console.error('💳 Stripe not configured - stripePromise is null');
       throw new Error('Stripe is not configured. Please add your Stripe publishable key to the .env file.');
     }
 
+    console.log('💳 Loading Stripe instance...');
     const stripe = await stripePromise;
+    
+    if (!stripe) {
+      console.error('💳 Failed to load Stripe instance');
+      throw new Error('Failed to load Stripe. Please check your internet connection.');
+    }
+    
+    console.log('💳 Stripe instance loaded successfully');
+    console.log('💳 Creating checkout session...');
     const session = await createCheckoutSession(planId, userId, userEmail);
+    
+    if (!session || !session.id) {
+      console.error('💳 Invalid session returned:', session);
+      throw new Error('Failed to create checkout session');
+    }
+    
+    console.log('💳 Checkout session created:', session.id);
+    console.log('💳 Redirecting to Stripe Checkout...');
     
     const { error } = await stripe.redirectToCheckout({
       sessionId: session.id,
     });
 
     if (error) {
+      console.error('💳 Stripe redirect error:', error);
       throw error;
     }
+    
+    console.log('💳 Redirect initiated successfully');
   } catch (error) {
-    console.error('Error redirecting to checkout:', error);
+    console.error('💳 Error in redirectToCheckout:', error);
     throw error;
   }
 };
